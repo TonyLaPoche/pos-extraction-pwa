@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#1c3c34" />
+    <meta
+      name="description"
+      content="Saisissez une latitude et une longitude, prévisualisez le lieu et ouvrez l’itinéraire Google Maps depuis votre position."
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Repère" />
+    <title>Repère — coordonnées GPS</title>
+    <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,650&family=Outfit:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#contenu">Aller au contenu</a>
+    <header class="topbar">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 48 48" aria-hidden="true">
+          <rect width="48" height="48" rx="14" fill="#f4efe6" />
+          <path fill="#e25c2c" d="M24 8c-6.2 0-11 4.8-11 11.1C13 26.4 24 40 24 40s11-13.6 11-20.9C35 12.8 30.2 8 24 8z" />
+          <circle cx="24" cy="18.6" r="3.6" fill="#f4efe6" />
+        </svg>
+        <div>
+          <p class="eyebrow">Coordonnées GPS</p>
+          <h1>Repère</h1>
+        </div>
+      </div>
+      <p class="lede">
+        Indiquez une latitude et une longitude pour voir le lieu, puis ouvrez le trajet Google Maps
+        depuis votre position.
+      </p>
+    </header>
+
+    <main id="contenu" class="layout">
+      <form id="search-form" class="card form-card">
+        <div class="coords">
+          <div class="field">
+            <label for="latitude">Latitude</label>
+            <div class="control">
+              <input
+                id="latitude"
+                name="latitude"
+                type="text"
+                inputmode="decimal"
+                autocomplete="off"
+                autocorrect="off"
+                spellcheck="false"
+                placeholder="48.8566"
+                required
+              />
+              <span aria-hidden="true">°</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="longitude">Longitude</label>
+            <div class="control">
+              <input
+                id="longitude"
+                name="longitude"
+                type="text"
+                inputmode="decimal"
+                autocomplete="off"
+                autocorrect="off"
+                spellcheck="false"
+                placeholder="2.3522"
+                required
+              />
+              <span aria-hidden="true">°</span>
+            </div>
+          </div>
+        </div>
+        <p id="form-error" class="error" role="alert"></p>
+        <button id="show-place" class="button primary" type="submit">Afficher le lieu</button>
+        <p class="hint">Vous pouvez coller une paire du type 48.8566, 2.3522.</p>
+      </form>
+
+      <section id="preview" class="card preview" aria-live="polite">
+        <div class="preview-copy">
+          <p class="eyebrow dark">Aperçu</p>
+          <h2 id="place-name">En attente de coordonnées</h2>
+          <p id="place-coords" class="coords-readout">Le lieu s’affichera sur la carte.</p>
+        </div>
+        <div class="map-frame">
+          <div id="map-empty" class="map-empty">
+            <span class="crosshair" aria-hidden="true"></span>
+            <p>Saisissez des coordonnées pour afficher le lieu.</p>
+          </div>
+          <div id="map" class="map" hidden></div>
+          <iframe
+            id="osm-fallback"
+            class="map"
+            title="Aperçu OpenStreetMap du lieu"
+            hidden
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+        <div class="route">
+          <label class="mode" for="travel-mode">
+            <span>Mode</span>
+            <select id="travel-mode">
+              <option value="driving">Voiture</option>
+              <option value="walking">À pied</option>
+              <option value="bicycling">Vélo</option>
+              <option value="transit">Transports</option>
+            </select>
+          </label>
+          <button id="route-button" class="button accent" type="button" disabled>
+            Itinéraire depuis ma position
+          </button>
+          <p id="route-status" class="status" role="status"></p>
+        </div>
+      </section>
+
+      <section class="card history" aria-labelledby="history-title">
+        <div class="section-head">
+          <h2 id="history-title">Recherches récentes</h2>
+          <button id="clear-history" class="text-button" type="button" hidden>Effacer</button>
+        </div>
+        <p id="history-empty" class="hint">Aucune recherche enregistrée sur cet appareil.</p>
+        <ul id="history-list" class="history-list"></ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>© Antoine Terrade 2026</p>
+    </footer>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Repère">
+  <rect width="512" height="512" rx="96" fill="#1c3c34"/>
+  <path fill="#e25c2c" d="M256 78c-72 0-130 56-130 128 0 104 130 228 130 228s130-124 130-228c0-72-58-128-130-128z"/>
+  <circle cx="256" cy="202" r="42" fill="#f4efe6"/>
+</svg>
