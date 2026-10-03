@@ -109,9 +109,13 @@ function writeHistory(items) {
 }
 
 function remember(entry) {
-  const next = [entry, ...readHistory().filter((item) => !samePlace(item, entry))];
-  writeHistory(next);
-  renderHistory(next);
+  try {
+    const next = [entry, ...readHistory().filter((item) => !samePlace(item, entry))];
+    writeHistory(next);
+    renderHistory(next);
+  } catch {
+    /* l’aperçu reste disponible même si le stockage est bloqué */
+  }
 }
 
 function updateHistoryLabel(lat, lng, label) {
@@ -395,22 +399,47 @@ function openShare(entry) {
   else shareDialog.setAttribute('open', '');
 }
 
+const showButton = document.querySelector('#show-place');
+let lastSearchAt = 0;
+
+function runSearch() {
+  const now = Date.now();
+  if (now - lastSearchAt < 400) return;
+  lastSearchAt = now;
+
+  try {
+    const result = readFormCoordinates();
+    if (result.error) {
+      errorEl.textContent = result.error;
+      errorEl.scrollIntoView({ block: 'nearest' });
+      return;
+    }
+    errorEl.textContent = '';
+    showButton.textContent = 'Affichage…';
+    const entry = {
+      lat: result.lat,
+      lng: result.lng,
+      label: formatPair(result.lat, result.lng),
+      savedAt: Date.now()
+    };
+    remember(entry);
+    selectPlace(entry, { scroll: true, lookup: true });
+  } catch {
+    errorEl.textContent = 'Impossible d’afficher le lieu. Réessayez.';
+  } finally {
+    showButton.textContent = 'Afficher le lieu';
+  }
+}
+
 form.addEventListener('submit', (event) => {
   event.preventDefault();
-  const result = readFormCoordinates();
-  if (result.error) {
-    errorEl.textContent = result.error;
-    return;
-  }
-  errorEl.textContent = '';
-  const entry = {
-    lat: result.lat,
-    lng: result.lng,
-    label: formatPair(result.lat, result.lng),
-    savedAt: Date.now()
-  };
-  remember(entry);
-  selectPlace(entry, { scroll: true, lookup: true });
+  runSearch();
+});
+
+showButton.addEventListener('pointerup', (event) => {
+  if (event.pointerType !== 'touch') return;
+  event.preventDefault();
+  runSearch();
 });
 
 shareButton.addEventListener('click', () => {
@@ -536,6 +565,18 @@ if (shared) {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+    let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (reloaded) return;
+      reloaded = true;
+      try {
+        if (sessionStorage.getItem('repere-updated') === '6') return;
+        sessionStorage.setItem('repere-updated', '6');
+      } catch {
+        return;
+      }
+      window.location.reload();
+    });
+    navigator.serviceWorker.register('./sw.js?v=6').catch(() => {});
   });
 }

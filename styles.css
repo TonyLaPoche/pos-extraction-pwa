@@ -297,6 +297,7 @@ h1 {
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .button:focus-visible,

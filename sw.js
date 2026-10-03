@@ -1,9 +1,9 @@
-const CACHE = 'repere-v3';
+const CACHE = 'repere-v6';
 const ASSETS = [
   './',
   './index.html',
-  './styles.css',
-  './app.js',
+  './styles.css?v=6',
+  './app.js?v=6',
   './manifest.webmanifest',
   './icons/icon.svg',
   './icons/icon-192.png',
