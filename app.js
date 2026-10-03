@@ -553,6 +553,50 @@ function placeFromQuery() {
   return { lat, lng, label: formatPair(lat, lng), savedAt: Date.now() };
 }
 
+const about = document.querySelector('#about');
+const aboutPanel = document.querySelector('#about-panel');
+const installButton = document.querySelector('#install-button');
+const installHint = document.querySelector('#install-hint');
+let deferredInstall = null;
+
+about.addEventListener('toggle', () => {
+  aboutPanel.hidden = !about.open;
+});
+
+const installed =
+  window.matchMedia('(display-mode: standalone)').matches ||
+  window.navigator.standalone === true;
+
+if (installed) installButton.hidden = true;
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  deferredInstall = event;
+  installButton.hidden = false;
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredInstall = null;
+  installButton.hidden = true;
+  installHint.hidden = true;
+});
+
+installButton.addEventListener('click', async () => {
+  if (deferredInstall) {
+    deferredInstall.prompt();
+    const choice = await deferredInstall.userChoice;
+    deferredInstall = null;
+    if (choice.outcome === 'accepted') installButton.hidden = true;
+    return;
+  }
+
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  installHint.textContent = ios
+    ? 'Dans Safari, touchez Partager, puis « Sur l’écran d’accueil ».'
+    : 'Ouvrez le menu du navigateur, puis « Installer l’application ».';
+  installHint.hidden = false;
+});
+
 renderHistory();
 const shared = placeFromQuery();
 if (shared) {
@@ -570,13 +614,13 @@ if ('serviceWorker' in navigator) {
       if (reloaded) return;
       reloaded = true;
       try {
-        if (sessionStorage.getItem('repere-updated') === '6') return;
-        sessionStorage.setItem('repere-updated', '6');
+        if (sessionStorage.getItem('repere-updated') === '7') return;
+        sessionStorage.setItem('repere-updated', '7');
       } catch {
         return;
       }
       window.location.reload();
     });
-    navigator.serviceWorker.register('./sw.js?v=6').catch(() => {});
+    navigator.serviceWorker.register('./sw.js?v=7').catch(() => {});
   });
 }

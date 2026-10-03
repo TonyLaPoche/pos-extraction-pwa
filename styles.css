@@ -88,31 +88,53 @@ h1 {
   color: rgba(244, 239, 230, 0.88);
 }
 
-.about {
-  max-width: 40rem;
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
   margin-top: 14px;
 }
 
-.about summary {
+.about { margin: 0; }
+
+.about summary,
+.header-action {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
   padding: 0 14px;
+  border: 0;
   border-radius: 999px;
   background: rgba(244, 239, 230, 0.12);
   color: #f4efe6;
+  font: inherit;
   font-weight: 600;
   cursor: pointer;
 }
 
 .about summary::-webkit-details-marker { display: none; }
 
-.about summary:focus-visible {
+.about summary:focus-visible,
+.header-action:focus-visible {
   outline: 3px solid #f4efe6;
   outline-offset: 2px;
 }
 
+.install-hint {
+  max-width: 38rem;
+  margin: 12px 0 0;
+  color: rgba(244, 239, 230, 0.94);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+@media (display-mode: standalone) {
+  #install-button { display: none; }
+}
+
 .about-body {
+  max-width: 40rem;
   margin-top: 12px;
   padding: 14px 16px;
   border-radius: 16px;

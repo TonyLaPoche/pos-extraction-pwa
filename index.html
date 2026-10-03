@@ -27,7 +27,7 @@
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin=""
     />
-    <link rel="stylesheet" href="./styles.css?v=6" />
+    <link rel="stylesheet" href="./styles.css?v=7" />
   </head>
   <body>
     <a class="skip" href="#contenu">Aller au contenu</a>
@@ -44,24 +44,28 @@
         </div>
       </div>
       <p class="lede">Insérez des coordonnées, voyez le lieu et envoyez le lien. Sans publicité.</p>
-      <details class="about">
-        <summary>À propos</summary>
-        <div class="about-body">
-          <p>
-            Repère sert à partager une position GPS sans publicité. Vous insérez des coordonnées, vous
-            voyez le lieu, vous envoyez un lien.
-          </p>
-          <p>
-            Tout reste sous votre contrôle. Pas d’analytique, pas de compte, pas d’accès à vos contacts
-            ni à vos photos. L’historique est enregistré seulement sur cet appareil.
-          </p>
-          <p>
-            La position de l’appareil est demandée uniquement pour créer l’itinéraire : le départ est
-            votre position, l’arrivée est le lieu saisi.
-          </p>
-          <p>Une application légère, pour transmettre un point GPS sans prise de tête.</p>
-        </div>
-      </details>
+      <div class="header-actions">
+        <details class="about" id="about">
+          <summary>À propos</summary>
+        </details>
+        <button id="install-button" class="header-action" type="button">Installer</button>
+      </div>
+      <div id="about-panel" class="about-body" hidden>
+        <p>
+          Repère sert à partager une position GPS sans publicité. Vous insérez des coordonnées, vous
+          voyez le lieu, vous envoyez un lien.
+        </p>
+        <p>
+          Tout reste sous votre contrôle. Pas d’analytique, pas de compte, pas d’accès à vos contacts
+          ni à vos photos. L’historique est enregistré seulement sur cet appareil.
+        </p>
+        <p>
+          La position de l’appareil est demandée uniquement pour créer l’itinéraire : le départ est
+          votre position, l’arrivée est le lieu saisi.
+        </p>
+        <p>Une application légère, pour transmettre un point GPS sans prise de tête.</p>
+      </div>
+      <p id="install-hint" class="install-hint" hidden></p>
     </header>
 
     <main id="contenu" class="layout">
@@ -198,6 +202,6 @@
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
       crossorigin=""
     ></script>
-    <script src="./app.js?v=6"></script>
+    <script src="./app.js?v=7"></script>
   </body>
 </html>
