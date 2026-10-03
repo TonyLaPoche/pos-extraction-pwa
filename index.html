@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#1c3c34" />
     <meta
       name="description"
-      content="Saisissez une latitude et une longitude, prévisualisez le lieu et ouvrez l’itinéraire Google Maps depuis votre position."
+      content="Partagez une position GPS sans publicité. La position de l’appareil n’est demandée que pour l’itinéraire, du départ à l’arrivée."
     />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -43,53 +43,81 @@
           <h1>Repère</h1>
         </div>
       </div>
-      <p class="lede">
-        Indiquez une latitude et une longitude pour voir le lieu, puis ouvrez le trajet Google Maps
-        depuis votre position.
-      </p>
+      <p class="lede">Insérez des coordonnées, voyez le lieu et envoyez le lien. Sans publicité.</p>
+      <details class="about">
+        <summary>À propos</summary>
+        <div class="about-body">
+          <p>
+            Repère sert à partager une position GPS sans publicité. Vous insérez des coordonnées, vous
+            voyez le lieu, vous envoyez un lien.
+          </p>
+          <p>
+            Tout reste sous votre contrôle. Pas d’analytique, pas de compte, pas d’accès à vos contacts
+            ni à vos photos. L’historique est enregistré seulement sur cet appareil.
+          </p>
+          <p>
+            La position de l’appareil est demandée uniquement pour créer l’itinéraire : le départ est
+            votre position, l’arrivée est le lieu saisi.
+          </p>
+          <p>Une application légère, pour transmettre un point GPS sans prise de tête.</p>
+        </div>
+      </details>
     </header>
 
     <main id="contenu" class="layout">
       <form id="search-form" class="card form-card">
-        <div class="coords">
-          <div class="field">
-            <label for="latitude">Latitude</label>
-            <div class="control">
-              <input
-                id="latitude"
-                name="latitude"
-                type="text"
-                inputmode="decimal"
-                autocomplete="off"
-                autocorrect="off"
-                spellcheck="false"
-                placeholder="48.8566"
-                required
-              />
-              <span aria-hidden="true">°</span>
+        <p class="form-kicker">DMS — degrés, minutes, secondes</p>
+        <fieldset class="axis">
+          <legend>Latitude</legend>
+          <div class="axis-row">
+            <div class="hemi" role="radiogroup" aria-label="Hémisphère de latitude">
+              <label><input type="radio" name="lat-hemi" value="N" checked /> N</label>
+              <label><input type="radio" name="lat-hemi" value="S" /> S</label>
             </div>
+            <label class="part">
+              <span class="sr-only">Degrés de latitude</span>
+              <input id="lat-deg" name="lat-deg" type="text" inputmode="numeric" autocomplete="off" placeholder="48" required />
+              <abbr title="degrés">°</abbr>
+            </label>
+            <label class="part">
+              <span class="sr-only">Minutes de latitude</span>
+              <input id="lat-min" name="lat-min" type="text" inputmode="numeric" autocomplete="off" placeholder="51" />
+              <abbr title="minutes">′</abbr>
+            </label>
+            <label class="part part-sec">
+              <span class="sr-only">Secondes de latitude</span>
+              <input id="lat-sec" name="lat-sec" type="text" inputmode="decimal" autocomplete="off" placeholder="45.81" />
+              <abbr title="secondes">″</abbr>
+            </label>
           </div>
-          <div class="field">
-            <label for="longitude">Longitude</label>
-            <div class="control">
-              <input
-                id="longitude"
-                name="longitude"
-                type="text"
-                inputmode="decimal"
-                autocomplete="off"
-                autocorrect="off"
-                spellcheck="false"
-                placeholder="2.3522"
-                required
-              />
-              <span aria-hidden="true">°</span>
+        </fieldset>
+        <fieldset class="axis">
+          <legend>Longitude</legend>
+          <div class="axis-row">
+            <div class="hemi" role="radiogroup" aria-label="Hémisphère de longitude">
+              <label><input type="radio" name="lng-hemi" value="E" checked /> E</label>
+              <label><input type="radio" name="lng-hemi" value="O" /> O</label>
             </div>
+            <label class="part">
+              <span class="sr-only">Degrés de longitude</span>
+              <input id="lng-deg" name="lng-deg" type="text" inputmode="numeric" autocomplete="off" placeholder="2" required />
+              <abbr title="degrés">°</abbr>
+            </label>
+            <label class="part">
+              <span class="sr-only">Minutes de longitude</span>
+              <input id="lng-min" name="lng-min" type="text" inputmode="numeric" autocomplete="off" placeholder="17" />
+              <abbr title="minutes">′</abbr>
+            </label>
+            <label class="part part-sec">
+              <span class="sr-only">Secondes de longitude</span>
+              <input id="lng-sec" name="lng-sec" type="text" inputmode="decimal" autocomplete="off" placeholder="15.331" />
+              <abbr title="secondes">″</abbr>
+            </label>
           </div>
-        </div>
+        </fieldset>
         <p id="form-error" class="error" role="alert"></p>
         <button id="show-place" class="button primary" type="submit">Afficher le lieu</button>
-        <p class="hint">Vous pouvez coller une paire du type 48.8566, 2.3522.</p>
+        <p class="hint">Exemple : 48° 51′ 45,81″ N et 2° 17′ 15,331″ E.</p>
       </form>
 
       <section id="preview" class="card preview" aria-live="polite">
@@ -114,6 +142,7 @@
           ></iframe>
         </div>
         <div class="route">
+          <button id="share-button" class="button share" type="button" disabled>Partager la position</button>
           <label class="mode" for="travel-mode">
             <span>Mode</span>
             <select id="travel-mode">
@@ -127,6 +156,7 @@
             Itinéraire depuis ma position
           </button>
           <p id="route-status" class="status" role="status"></p>
+          <p class="hint">Le départ est la position de l’appareil. L’arrivée est le lieu affiché.</p>
         </div>
       </section>
 
@@ -143,6 +173,25 @@
     <footer>
       <p>© Antoine Terrade 2026</p>
     </footer>
+
+    <dialog id="share-dialog" class="share-dialog" aria-labelledby="share-title">
+      <div class="section-head">
+        <h2 id="share-title">Partager la position</h2>
+        <button id="share-close" class="text-button" type="button">Fermer</button>
+      </div>
+      <p id="share-place" class="share-place"></p>
+      <p id="share-coords" class="coords-readout"></p>
+      <a id="share-link" class="link-box" href="" target="_blank" rel="noopener"></a>
+      <button id="copy-link" class="button primary" type="button">Copier le lien</button>
+      <button id="native-share" class="button accent" type="button" hidden>Autres applications</button>
+      <div class="share-grid">
+        <a id="share-sms" class="share-app" href="">SMS</a>
+        <a id="share-whatsapp" class="share-app" href="" target="_blank" rel="noopener">WhatsApp</a>
+        <a id="share-telegram" class="share-app" href="" target="_blank" rel="noopener">Telegram</a>
+        <a id="share-viber" class="share-app" href="">Viber</a>
+      </div>
+      <p id="share-status" class="status" role="status"></p>
+    </dialog>
 
     <script
       src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"

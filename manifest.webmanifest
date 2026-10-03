@@ -1,7 +1,7 @@
 {
   "name": "Repère — coordonnées GPS",
   "short_name": "Repère",
-  "description": "Prévisualisez un lieu à partir de coordonnées GPS et ouvrez l’itinéraire depuis votre position.",
+  "description": "Partagez une position GPS sans publicité. La position de l’appareil n’est demandée que pour l’itinéraire, du départ à l’arrivée.",
   "id": "./",
   "start_url": "./",
   "scope": "./",

@@ -1,4 +1,4 @@
-const CACHE = 'repere-v1';
+const CACHE = 'repere-v3';
 const ASSETS = [
   './',
   './index.html',
